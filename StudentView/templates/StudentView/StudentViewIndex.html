@@ -1,0 +1,233 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>College Attendance Portal</title>
+  <link rel="stylesheet" href="{% static 'StudentView/Index_Style.css' %}" />
+</head>
+
+<body>
+  <header class="header">
+    <h1 class="header-title">Swami Sadguru Nithyananda Institute of Technology</h1>
+    <h2>Attendance Portal</h2>
+  </header>
+  <div class="action-bar">
+    <div class="left-section"><b>Date: <span id="date"></span></b></div>
+    <div class="right-section">
+      <a href="/print-attendance" class="btn primary">Print Preview </a>
+      <a class="btn success"">Download</a></div>
+  </div>
+  <div class="container">
+    <section class="attendance-section">
+      <h2 class="section-title">Present Students</h2>
+    
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>Name</th>
+            <th style="text-align: center;">Status</th>
+          </tr>
+        </thead>
+        <tbody id="presentStudentsTable" >
+        </tbody>
+      </table>
+
+    </section>
+    <section class="attendance-section">
+      <h2 class="section-title">Absent Students</h2>
+      <table class="table">
+        <thead class="thead-dark">
+          <tr>
+            <th>#</th>
+            <th>ID</th>
+            <th>First</th>
+            <th style="text-align: center;">Status</th>
+          </tr>
+        </thead>
+        <tbody id="allStudentsTable"></tbody>
+      </table>
+    </section>
+  </div>
+
+  <!-- snackbar -->
+  <div id="snackbar">Some text some message..</div>
+
+  <footer class="footer">
+    <p>&copy; QR Attendance System 2023 - Team Hokage</p>
+  </footer>
+
+  <script>
+    const uriPresentStudents = '/present-students'
+    const uriAllStudents = '/all-students'
+    const uriRegisterAttendance = '/mark-attendance'
+    const dateSection = document.getElementById('date');
+
+    const presentStudentsTable = document.getElementById('presentStudentsTable')
+    const allStudentsTable = document.getElementById('allStudentsTable')
+
+    let today = new Date();
+    const dd = String(today.getDate()).padStart(2, '0');
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const yyyy = today.getFullYear();
+
+    let allStudentData;
+    let presentStudentData;
+    let absentStudentData;
+
+    today = dd + '/' +  mm + '/' + yyyy;
+
+    dateSection.innerText = today
+
+    const registerAttendance = (userId) => {
+      console.log('Sending data for user ID:', userId);
+      const data = { 'student-name': userId };
+      return fetch(uriRegisterAttendance, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(data)
+      })
+    };
+
+    const createToggleButton = (text, onClickHandler) => {
+      const button = document.createElement('button')
+      button.textContent = text
+      button.addEventListener('click', onClickHandler)
+      button.classList.add('btn-primary')
+      return button
+    }
+
+
+    const createStudentRow = (student, index, buttonText, buttonAction) => {
+      const row = document.createElement('tr');
+
+      const rowCountCell = document.createElement('td');
+      rowCountCell.textContent = index + 1
+
+      const idCell = document.createElement('td');
+      idCell.textContent = student.s_roll;
+
+      const nameCell = document.createElement('td');
+      nameCell.textContent = student.s_fname;
+
+      const statusCell = document.createElement('td');
+      statusCell.style.textAlign = 'center'
+
+      const btnDelete = createToggleButton(buttonText, buttonAction)
+      statusCell.appendChild(btnDelete)
+      row.appendChild(rowCountCell);
+      row.appendChild(idCell);
+      row.appendChild(nameCell);
+      row.appendChild(statusCell);
+      return row;
+    }
+
+    const presentStudentUI = () => {
+      presentStudentData.forEach((student, index) => {
+        const row = createStudentRow(student, index, 'Mark as Absent', () => {
+          registerAttendance(student.s_roll)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Bad request: ' + response.statusText);
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data.action == 'remove') {
+                toast(data.message)
+                presentStudentData.splice(index, 1);
+                getData()
+                row.remove();
+              }
+
+              return data;
+            })
+            .catch(error => {
+              console.error('Unexpected error:', error);
+              throw error;
+            });
+        })
+        presentStudentsTable.appendChild(row);
+      });
+    }
+
+    const absentStudentUI = () => {
+      absentStudentData.forEach((student, index) => {
+        const row = createStudentRow(student, index, 'Mark as Present', () => {
+          registerAttendance(student.s_roll)
+            .then(response => {
+              if (!response.ok) {
+                throw new Error('Bad request: ' + response.statusText);
+              }
+              return response.json();
+            })
+            .then(data => {
+              if (data.action == 'add') {
+                toast(data.message)
+                allStudentData.splice(index, 1);
+                
+                getData()
+                row.remove();
+              }
+
+              return data;
+            })
+            .catch(error => {
+              console.error('Unexpected error:', error);
+              throw error;
+            });
+        })
+        allStudentsTable.appendChild(row);
+      });
+    }
+
+    const resetUI = () =>
+    {
+      allStudentsTable.innerHTML = ''
+      presentStudentsTable.innerHTML = ""
+    }
+    async function getData() {
+
+      const responses = await Promise.all([fetch(uriAllStudents), fetch(uriPresentStudents)])
+
+      const data1 = await responses[0].json()
+      const data2 = await responses[1].json()
+
+      resetUI()
+
+      allStudentData = data1;
+      presentStudentData = data2;
+
+      absentStudentData = data1.filter(({ s_roll: id1 }) => !data2.some(({ s_roll: id2 }) => id2 === id1));
+      
+      presentStudentUI()
+      absentStudentUI()
+    }
+
+    getData()
+    // const absentStudents = allStudentData.filter(student => !presentStudentData.includes(student));
+
+    const checkboxes = document.querySelectorAll(".attendance-slider");
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", () => {
+        console.log(checkbox.value)
+        registerAttendance(checkbox.value);
+      });
+    });
+    function toast(value) {
+      var x = document.getElementById("snackbar");
+      x.className = "show";
+      snackbar.innerText = value
+      setTimeout(function () { x.className = x.className.replace("show", ""); }, 3000);
+    }    
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>QR Attendance System</title>
+    <link rel="stylesheet" href="{% static 'FacultyView/Index_Style.css' %}" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <h1>Swami Sadguru Nithyananda Institute of Technology</h1>
+      <h2>Attendance Portal</h2>
+    </header>
+    <main>
+      <div class="attendance-container">
+        <div class="attendance-card">
+          <h2>
+            Connect to College Wi-Fi and Scan the QR Code to Mark Attendance
+          </h2>
+          {% comment %}
+          <a href="{% url 'add_manually' %}">
+            {% endcomment %}
+            <img
+              src="{% static 'FacultyView/qrcode.png' %}"
+              alt="QR Code"
+              width="200"
+              height="200"
+            />
+          </a>
+          <p class="hint">Please scan the QR code to mark your attendance.</p>
+        </div>
+      </div>
+    </main>
+    <footer>
+      <p>&copy; QR Attendance System 2023 - Team Hokage</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,264 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.container {
+  margin: 10px;
+  padding: 20px;
+  display: grid;
+  gap:15px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.action-bar {
+  margin-inline: 30px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  margin-top: 20px;
+}
+
+.action-bar .left-section{
+  display: flex;
+  align-items: center;
+}
+.action-bar .right-section{
+  text-align: right;
+}
+
+.action-bar .btn{
+  background-color: #9e9e9e;
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  display: inline-block;
+  text-decoration: none;
+}
+
+.primary{
+  background-color: #0a77dd !important;
+  color: white;
+}
+
+.success{
+  background-color: #04b855 !important;
+}
+
+.header {
+  background-color: #0351a5;
+  color: #fff;
+  padding: 20px 0;
+  text-align: center;
+}
+
+.header h1 {
+  font-size: 36px;
+  font-weight: bold;
+}
+
+.attendance-section {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-top: 20px;
+}
+
+.section-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.student-list {
+  padding: 0;
+}
+
+.student {
+  margin-bottom: 10px;
+}
+
+.student-label {
+  display: block;
+  padding: 10px;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  transition: background-color 0.3s ease;
+}
+
+.student-label:hover {
+  background-color: #e0e0e0;
+}
+
+.submit-button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin-top: 20px;
+  display: inline-block;
+}
+
+.submit-button:hover {
+  background-color: #0056b3;
+}
+
+.footer {
+  background-color: #0350a1;
+  color: #fff;
+  text-align: center;
+  padding: 10px 0;
+}
+
+.table {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.table td, .table th {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+.table tr:nth-child(even){background-color: #f2f2f2;}
+
+.table tr:hover {background-color: #ddd;}
+
+.table th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #272727;
+  color: white;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #4CAF50;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #4CAF50;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* The snackbar - position it at the bottom and in the middle of the screen */
+#snackbar {
+  visibility: hidden; /* Hidden by default. Visible on click */
+  min-width: 250px; /* Set a default minimum width */
+  margin-left: -125px; /* Divide value of min-width by 2 */
+  background-color: #333; /* Black background color */
+  color: #fff; /* White text color */
+  text-align: center; /* Centered text */
+  border-radius: 2px; /* Rounded borders */
+  padding: 16px; /* Padding */
+  position: fixed; /* Sit on top of the screen */
+  z-index: 1; /* Add a z-index if needed */
+  right: 30px; /* Center the snackbar */
+  bottom: 30px; /* 30px from the bottom */
+}
+
+/* Show the snackbar when clicking on a button (class added with JavaScript) */
+#snackbar.show {
+  visibility: visible; /* Show the snackbar */
+  /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+  However, delay the fade out process for 2.5 seconds */
+  -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@keyframes fadein {
+  from {bottom: 0; opacity: 0;}
+  to {bottom: 30px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+  from {bottom: 30px; opacity: 1;}
+  to {bottom: 0; opacity: 0;}
+}

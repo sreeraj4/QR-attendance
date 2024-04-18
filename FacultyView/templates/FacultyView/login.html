@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+        }
+        html,
+        body{
+            height: 100%;
+            width: 100%;
+        }
+        .wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #eee;
+            height: 100%;
+        }
+
+        .content {
+            width: 300px;
+            background-color: #fff;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type=text]{
+            padding: 6px;
+            border: 1px solid grey;
+            margin-block: 4px;
+        }
+
+        button{
+            padding: 6px;
+            background-color: rgb(15, 138, 221);
+            color: white;
+            border: 1px solid rgb(12, 112, 179);
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrapper">
+        <div class="content">
+            <label for="student">Enter Roll number</label>
+            <input id="student" name="student-name" type="text" required>
+            <button id="submitButton">Log attendance</button>
+        </div>
+    </div>
+
+    <script>
+        const uriRegisterAttendance = '/mark-attendance'
+        const studentInput = document.getElementById('student')
+        const submitButton = document.getElementById('submitButton')
+
+        const registerAttendance = (userId) => {
+            console.log('Sending data for user ID:', userId);
+            const data = { 'student-name': userId };
+            return fetch(uriRegisterAttendance, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+        };
+
+        submitButton.addEventListener('click', () => {
+            if (studentInput.value != '') {
+                registerAttendance(studentInput.value).then(response => {
+                    if (!response.ok) {
+                        throw new Error('Bad request: ' + response.statusText);
+                        alert('Error')
+                    }
+                    return response.json();
+                }).then(data => {
+                    if (data.action == 'add') {
+                        console.log("Attendance registered")
+                        alert('Attendance registered')
+                        window.location.href = "/submitted";
+                    }
+                    if (data.action == 'remove') {
+                        console.log("Marked as absent")
+                        alert('Marked as absent')
+                    }
+
+                    return data;
+                }).catch(error => {
+                    console.error('Unexpected error:', error);
+                    alert(error)
+                    throw error;
+                });
+            }
+        })
+
+
+
+    </script>
+</body>
+
+</html>
